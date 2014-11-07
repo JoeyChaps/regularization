@@ -27,10 +27,11 @@ Installation
     Run the installer, and add the location of the installed python directory 
     to your PATH environment variable.
 
-    - Numpy: If installing numpy in 32-bit Windows, visit http://sourceforge.net/projects/numpy/files/NumPy/1.8.1/ to download the latest version. 
-    Version 1.8.1 is for python version 2.7.7. But if you're installing 
-    numpy in 64-bit Windows, you should instead go to 
-    http://www.lfd.uci.edu/~gohlke/pythonlibs/ and download the Numpy-MKL 
+    - Numpy: If installing numpy in 32-bit Windows, visit 
+    http://sourceforge.net/projects/numpy/files/NumPy/1.8.1/ to download 
+    the latest version. Version 1.8.1 is for python version 2.7.7. But 
+    if you're installing numpy in 64-bit Windows, you should instead go 
+    to http://www.lfd.uci.edu/~gohlke/pythonlibs/ and download the Numpy-MKL 
     1.8 extension package for 64-bit architectures. Grab the executable 
     labeled py2.7 if using python 2.7.
 
