@@ -1,5 +1,11 @@
 #!/usr/bin/python
-
+#######
+# File: DataRandomizer.py
+# Project: Regularization
+# Author: Joe Chapman
+# Date: 9-8-14
+# Url: https://github.com/JoeyChaps/regularization
+#######
 import os
 import random
 from time import gmtime, strftime

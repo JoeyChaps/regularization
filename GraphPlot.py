@@ -1,5 +1,11 @@
 #!/usr/bin/python
-
+#######
+# File: GraphPlot.py
+# Project: Regularization
+# Author: Joe Chapman
+# Date: 9-8-14
+# Url: https://github.com/JoeyChaps/regularization
+#######
 import matplotlib.pyplot as plt
 
 class GraphPlotter:

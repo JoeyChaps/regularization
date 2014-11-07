@@ -1,5 +1,11 @@
 #!/usr/bin/python
-
+#######
+# File: Regularizer.py
+# Project: Regularization
+# Author: Joe Chapman
+# Date: 9-8-14
+# Url: https://github.com/JoeyChaps/regularization
+#######
 from time import gmtime, strftime
 import math
 import numpy as np

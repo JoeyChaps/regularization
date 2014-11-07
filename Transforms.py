@@ -1,4 +1,11 @@
 #!/usr/bin/python
+#######
+# File: Transforms.py
+# Project: Regularization
+# Author: Joe Chapman
+# Date: 9-8-14
+# Url: https://github.com/JoeyChaps/regularization
+#######
 
 class Transform:
 
