@@ -236,11 +236,21 @@ class Transform:
                     if (self.count >= 2):
                         sFormula = sFormula + ", x0^2, x0x1, x1^2"
                         if (self.count >= 3):
-                            sFormula = sFormula + ", x0^3, x0^2x1, x1^2x0, x1^3"
+
+                            sFormula = sFormula + \
+                                       ", x0^3, x0^2x1, x1^2x0, x1^3"
+                            
                             if (self.count >= 4):
-                                sFormula = sFormula + ", x0^4, x0^3x1, x0^2x1^2, x1^3x0, x1^4"
+
+                                sFormula = sFormula + \
+                                           ", x0^4, x0^3x1, x0^2x1^2, x1^3x0, \
+                                            x1^4"
+
                                 if (self.count >= 5):
-                                    sFormula = sFormula + ", x0^5, x0^4x1, x0^3x1^2, x0^2x1^3, x1^4x0, x1^5"
+
+                                    sFormula = sFormula + \
+                                               ", x0^5, x0^4x1, x0^3x1^2, \
+                                                x0^2x1^3, x1^4x0, x1^5"
 
                 self.transformDef = sFormula
                 
@@ -270,9 +280,15 @@ class Transform:
                             if (self.count >= 3):
                                 a_row.append([x0_3, x0_2 * x1, x1_2 * x0, x1_3])
                                 if (self.count >= 4):
-                                    a_row.append([x0_4, x0_3 * x1, x0_2 * x1_2, x1_3 * x0, x1_4])
+
+                                    a_row.append([x0_4, x0_3 * x1, x0_2 * x1_2, 
+                                                  x1_3 * x0, x1_4])
+                                    
                                     if (self.count >= 5):
-                                        a_row.append([x0_5, x0_4 * x1, x0_3 * x1_2, x0_2 * x1_3, x1_4 * x0, x1_5])
+                                        
+                                        a_row.append([x0_5, x0_4 * x1, x0_3 * 
+                                                      x1_2, x0_2 * x1_3, x1_4 
+                                                      * x0, x1_5])
                             
                     a_tranPats.append(a_row)
 

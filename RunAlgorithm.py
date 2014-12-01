@@ -68,7 +68,8 @@ def loadData(dataFile):
 
         if (cols != prev):
             if (count != 0):
-                print("unequal line counts: " + str(cols) + " and " + str(prev) + " at line " + str(count) + "\n")
+                print("unequal line counts: " + str(cols) + " and " + str(prev) \
+                      + " at line " + str(count) + "\n")
 
         count += 1
 
@@ -118,24 +119,27 @@ def prepLambdas(sLambdas):
 
 def main(argv):
 
-    patsLim = -1    # This number determines how many patterns will be used in this run of
-                    # the program. The number is the total number of train and test patterns
-                    # combined. Or set patsLim to -1 to use all the available patterns in the 
-                    # original data set (the file referenced by the fileName variable below), 
+    patsLim = -1    # This number determines how many patterns will be used in 
+                    # this run of the program. The number is the total number 
+                    # of train and test patterns combined. Or set patsLim to -1
+                    # to use all the available patterns in the original data 
+                    # set (the file referenced by the fileName variable below), 
                     # however many there may be.  
     
-    bRefreshData = True     # When bRefreshData is true, the program generates new data files
-                            # for the training and test sets, randomly selecting and ordering 
-                            # the data for the new program run. When bRefreshData is false,
-                            # the program uses previously generated data files stored in the 
-                            # saved_data directory.
+    bRefreshData = True     # When bRefreshData is true, the program generates 
+                            # new data files for the training and test sets, 
+                            # randomly selecting and ordering the data for the 
+                            # new program run. When bRefreshData is false, the 
+                            # program uses previously generated data files 
+                            # stored in the saved_data directory.
 
-    nMaxFeatures = 5    # Sets the number of features used in the transform. If 3, the complete 
-                        # first-order transform of three features is applied. If six, the complete 
-                        # second-order transform is applied. 
+    nMaxFeatures = 5    # Sets the number of features used in the transform. If 
+                        # 3, the complete first-order transform of three 
+                        # features is applied. If six, the complete second-
+                        # order transform is applied. 
 
-    bGenerateData = False     # If true, instead of reading data files, data is produced 
-                            # using local generateData() method.
+    bGenerateData = False   # If true, instead of reading data files, data is 
+                            # produced using local generateData() method.
 
     sMode = "Train"
 
@@ -170,7 +174,8 @@ def main(argv):
     arg = []
 
     try:
-        opts, args = getopt.getopt(argv, "l:p:d", ["lambdas=", "pats=", "data"])
+        opts, args = getopt.getopt(argv, "l:p:d", ["lambdas=", "pats=", 
+                                                   "data"])
             
     except getopt.GetoptError as err:
         print("blarf")
@@ -189,7 +194,9 @@ def main(argv):
 
         elif opt in ("-m", "--mode"):
 
-            if ((arg == "Train") or (arg == "TrainAndTest") or (arg == "TrainAndVal")):
+            if ((arg == "Train") or (arg == "TrainAndTest") or 
+                (arg == "TrainAndVal")):
+
                 sMode = arg
 
         elif opt in ("-d", "--data"):
@@ -217,7 +224,9 @@ def main(argv):
 
     if sMode == "TrainAndTest":
         if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(fileName, projectName, patsLim)
+            data_randomizer = DataRandomizer.DataRandomizer(
+                fileName, projectName, patsLim)
+
             data_randomizer.createDataFiles()
 
             rTestFileName = data_randomizer.getTestFile()
@@ -237,7 +246,9 @@ def main(argv):
 
         ncols = len(a_trainPats[0]) - 1
 
-        if ((fileName == "one-not-one.txt") or (fileName == "one-five-train.csv")):
+        if ((fileName == "one-not-one.txt") or 
+            (fileName == "one-five-train.csv")):
+
             classIndex = 0
             xIn = 1
             yIn = 2
@@ -249,11 +260,14 @@ def main(argv):
 
         npats = nTrainPats + nTestPats
 
-        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrTe-" + str(nMaxFeatures)
+        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrTe-" + \
+                        str(nMaxFeatures)
 
     elif sMode == "TrainAndVal":
         if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(fileName, projectName, patsLim)
+            data_randomizer = DataRandomizer.DataRandomizer(
+                fileName, projectName, patsLim)
+
             data_randomizer.createTrainAndValFiles()
 
             rValFileName = data_randomizer.getValFile()
@@ -273,7 +287,9 @@ def main(argv):
 
         ncols = len(a_trainPats[0]) - 1
 
-        if ((fileName == "one-not-one.txt") or (fileName == "one-five-train.csv")):
+        if ((fileName == "one-not-one.txt") or 
+            (fileName == "one-five-train.csv")):
+
             classIndex = 0
             xIn = 1
             yIn = 2
@@ -285,7 +301,8 @@ def main(argv):
 
         npats = nTrainPats + nValPats
 
-        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrVal-" + str(nMaxFeatures)
+        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrVal-" \
+                        + str(nMaxFeatures)
 
     elif sMode == "Train":
 
@@ -299,7 +316,8 @@ def main(argv):
             savedTrainingFile = "\\regularize_train.csv"
 
         if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(fileName, projectName, patsLim)
+            data_randomizer = DataRandomizer.DataRandomizer(
+                fileName, projectName, patsLim)
 
             if bRandomize:
                 data_randomizer.generateData(patsLim, dataFunc)
@@ -320,7 +338,10 @@ def main(argv):
             bConvertClass = False
             xIn = 0
             yIn = 1
-        elif ((fileName == "one-not-one.txt") or (fileName == "one-five-train.csv")):
+
+        elif ((fileName == "one-not-one.txt") or 
+              (fileName == "one-five-train.csv")):
+
             classIndex = 0
             xIn = 1
             yIn = 2
@@ -353,11 +374,21 @@ def main(argv):
     reg = Regularizer.Regularizer(newOutputDir, transNum, projectName)
 
     if sMode == "Train":
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas, nTrainPats, 0, [], a_trainPats, dataFunc)
+        
+        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas,
+                         nTrainPats, 0, [], a_trainPats, dataFunc)
+
     elif sMode == "TrainAndTest":
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas, nTrainPats, nTestPats, a_testPats, a_trainPats, dataFunc)
+
+        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas, 
+                         nTrainPats, nTestPats, a_testPats, a_trainPats, 
+                         dataFunc)
+
     elif sMode == "TrainAndVal":
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas, nTrainPats, nValPats, a_valPats, a_trainPats, dataFunc)
+        
+        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas,
+                         nTrainPats, nValPats, a_valPats, a_trainPats,
+                         dataFunc)
         
     print("\nDone!")
 

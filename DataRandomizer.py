@@ -112,7 +112,9 @@ class DataRandomizer:
 
             if (cols != prev):
                 if (count != 0):
-                    print("unequal line counts: " + str(cols) + " and " + str(prev) + " at line " + str(count) + "\n")
+                    
+                    print("unequal line counts: " + str(cols) + " and " + \
+                          str(prev) + " at line " + str(count) + "\n")
 
             count += 1
 

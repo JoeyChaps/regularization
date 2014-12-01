@@ -46,7 +46,10 @@ class GraphPlotter:
 
         if self.sLegend:
             for g in range(0, self.graphCount):
-                self.ax.plot(self.a_x[g], self.a_y[g], self.a_types[g], label=self.a_legends[g])
+
+                self.ax.plot(self.a_x[g], self.a_y[g], self.a_types[g], 
+                             label=self.a_legends[g])
+
         else:            
             for g in range(0, self.graphCount):
                 self.ax.plot(self.a_x[g], self.a_y[g], self.a_types[g])
@@ -72,8 +75,13 @@ class GraphPlotter:
         self.ax.axis([self.xMin,self.xMax,self.yMin,self.yMax])    
 
         handles, labels = self.ax.get_legend_handles_labels()
-        lgd = self.ax.legend(handles, labels, loc='upper center', bbox_to_anchor=(1.18, 1.02))
-        self.fig.savefig(self.sFile, bbox_extra_artists=(lgd,), bbox_inches='tight')
+
+        lgd = self.ax.legend(handles, labels, loc='upper center', 
+                             bbox_to_anchor=(1.18, 1.02))
+
+        self.fig.savefig(self.sFile, bbox_extra_artists=(lgd,), 
+                         bbox_inches='tight')
+        
         plt.close()
 
 

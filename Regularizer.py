@@ -13,9 +13,9 @@ from scipy import optimize
 from numpy.linalg import inv
 import os
 import shutil
+from reportlab.pdfgen import canvas as pdffile
 import Transforms
 import GraphPlot
-from reportlab.pdfgen import canvas as pdffile
 
 
 class Regularizer:
@@ -38,10 +38,14 @@ class Regularizer:
 
         self.wFileName = outputPath + "\\results.txt"
         self.pdfFileName = outputPath + "\\results.pdf"
-        self.patternPlot = GraphPlot.GraphPlotter(outputPath + "\\patterns.png", "Average Intensity", "Symmetry", "Digit Recognition", "toprightout")
+        self.patternPlot = GraphPlot.GraphPlotter(
+            outputPath + "\\patterns.png", "Average Intensity", "Symmetry", 
+            "Digit Recognition", "toprightout")
 
 
-    def runAlgorithm(self, nMaxFeatures, classIndex, xIndex, yIndex, ncolumns, a_Lambdas, nTrainPats, nTestPats, a_TestPatterns, a_TrainPatterns, dataFunction):
+    def runAlgorithm(self, nMaxFeatures, classIndex, xIndex, yIndex, ncolumns, 
+                     a_Lambdas, nTrainPats, nTestPats, a_TestPatterns, 
+                     a_TrainPatterns, dataFunction):
 
         a_ww = []
         a_desiredYns = []
@@ -53,7 +57,8 @@ class Regularizer:
 
         elif self.project == "one-not-one":
 
-            a_desiredYns = self.plotOnesNotOnes(classIndex, xIndex, yIndex, a_pats)
+            a_desiredYns = self.plotOnesNotOnes(classIndex, xIndex, yIndex, 
+                                                a_pats)
         
         for a_row in a_pats:
             del a_row[classIndex]
@@ -80,7 +85,9 @@ class Regularizer:
             for lam in a_Lambdas:
                 print("\ntraining with lambda - " + str(lam) + " ...\n")
 
-                trainEin, accuracy, a_ww = self.trainWeights(ncolumns, nTrainPats, lam, a_desiredYns, a_pats)
+                trainEin, accuracy, a_ww = self.trainWeights(
+                    ncolumns, nTrainPats, lam, a_desiredYns, a_pats)
+
                 Eaug, LWregTWreg = self.getEaug(lam, trainEin, a_ww)
                 a_Eaug.append([lam, trainEin, LWregTWreg, Eaug])
                 self.plotClassifiers(nMaxFeatures, a_ww, dataFunction, lam)
@@ -93,12 +100,14 @@ class Regularizer:
             sTransform = self.printAndGetTransformInfo(sTransDef, sTransVers)            
             print("\ntraining whole set - " + sTransform + " ...\n")
 
-            trainEin, accuracy, a_ww = self.trainWeights(ncolumns, nTrainPats, lam, a_desiredYns, a_pats)
+            trainEin, accuracy, a_ww = self.trainWeights(
+                ncolumns, nTrainPats, lam, a_desiredYns, a_pats)
             
             self.plotClassifiers(nMaxFeatures, a_ww, dataFunction)
             self.printAndGetTransformInfo(sTransDef, sTransVers)
             self.writeWeights(a_ww)
-            self.addToPdfString("\nE-train: " + str(round(trainEin, 3)) + "\n\n")
+            self.addToPdfString(
+                "\nE-train: " + str(round(trainEin, 3)) + "\n\n")
 
             self.patternPlot.plotGraphs()
 
@@ -106,7 +115,8 @@ class Regularizer:
             self.addToPdfString("---------------------------------\n")
             self.addToPdfString("TESTING POCKET ALGORITHM\n")    
             
-            self.testPocketAlg(ncolumns, nTrainPats, self.a_pocketAlgWts, a_desiredYns, a_pats)
+            self.testPocketAlg(ncolumns, nTrainPats, self.a_pocketAlgWts, 
+                               a_desiredYns, a_pats)
 
             self.addToPdfString("Weights:")
 
@@ -183,8 +193,11 @@ class Regularizer:
 
         lineStyle = self.getLineStyle(self.lineCount)
         
-        decayFunc = lambda x: (a_wts[0] * x) + (a_wts[1] * x * x) + (a_wts[2] * x * x * x) +\
-         (a_wts[3] * x * x * x * x) + (a_wts[4] * x * x * x * x * x)
+        decayFunc = lambda x: (a_wts[0] * x) + \
+                               (a_wts[1] * x * x) + \
+                               (a_wts[2] * x * x * x) + \
+                               (a_wts[3] * x * x * x * x) + \
+                               (a_wts[4] * x * x * x * x * x)
 
         a_xstar = []
         a_xbase = []
@@ -201,12 +214,20 @@ class Regularizer:
 
             else:                
                 if nFeatures == 3:
-                    lineFunc = lambda x2: (a_wts[0]) + (a_wts[1] * x1) + (a_wts[2] * x2)    
+                    lineFunc = lambda x2: (a_wts[0]) + \
+                                           (a_wts[1] * x1) + \
+                                           (a_wts[2] * x2)    
+
                     xstar = optimize.fsolve(lineFunc, -1.5)
                     a_xstar.append(xstar)
                 elif nFeatures == 6:
-                    curveFunc = lambda x2: (a_wts[0]) + (a_wts[1] * x1) + (a_wts[2] * x2) + (a_wts[3] * x1 * x1) + \
-                     (a_wts[4] * x1 * x2) + (a_wts[5] * x2 * x2)
+                    curveFunc = lambda x2: (a_wts[0]) + \
+                                            (a_wts[1] * x1) + \
+                                            (a_wts[2] * x2) + \
+                                            (a_wts[3] * x1 * x1) + \
+                                            (a_wts[4] * x1 * x2) + \
+                                            (a_wts[5] * x2 * x2)
+
                     xstar = optimize.fsolve(curveFunc, -1.5)
                     a_xstar.append(xstar)    
 
@@ -216,29 +237,41 @@ class Regularizer:
         if lam >= 0:
             lineProp = ["$\lambda$ = " + str(lam), lineStyle]
             a_graphData.append([xRange, a_xstar, lineProp[1], lineProp[0]])
-            a_graphData.append([xRange, a_xbase, 'r-', "$f$($x$) = 1 + 9$x^2$"])
+
+            a_graphData.append(
+                [xRange, a_xbase, 'r-', "$f$($x$) = 1 + 9$x^2$"])
+
             self.saveDecayGraph(lam, a_graphData)
             self.lineCount += 1
         else:
             lineProp = ["$f$($x$) = 0", lineStyle]
-            self.patternPlot.addGraph(xRange, a_xstar, lineProp[1], lineProp[0])
+
+            self.patternPlot.addGraph(
+                xRange, a_xstar, lineProp[1], lineProp[0])
+
             self.lineCount += 1
 
             if nFeatures == 3:    
                 a_pw = self.a_pocketAlgWts
                 a_xstar = []
                 for x1 in xRange:
-                    lineFunc = lambda x2: (a_pw[0]) + (a_pw[1] * x1) + (a_pw[2] * x2) 
+                    lineFunc = lambda x2: (a_pw[0]) + \
+                                           (a_pw[1] * x1) + \
+                                           (a_pw[2] * x2) 
+
                     xstar = optimize.fsolve(lineFunc, -1.5) 
                     a_xstar.append(xstar)                    
 
-                self.patternPlot.addGraph(xRange, a_xstar, 'g-', "pocket algorithm")
+                self.patternPlot.addGraph(
+                    xRange, a_xstar, 'g-', "pocket algorithm")
+
                 self.lineCount += 1            
         
 
     def saveDecayGraph(self, lamb, a_graphInfo):
 
         graphFile = self.outputPath + "\\decayGraph-Lambda_" + str(lamb) + ".png"
+
         decayPlot = GraphPlot.GraphPlotter(graphFile, "X", "Y", "Weight Decay", "toprightout")
 
         for info in a_graphInfo:
@@ -287,8 +320,8 @@ class Regularizer:
             for c in range(0, ncols):
                 a_pat[p][c] = float(a_pat[p][c])
         
-             yFit = self.getYFit(ncols, a_pat[p], a_wts)
-             a_actualYn.append(yFit)
+            yFit = self.getYFit(ncols, a_pat[p], a_wts)
+            a_actualYn.append(yFit)
     
         Eout = self.getInErr(npats, a_desiredYn, a_actualYn)
 
@@ -306,13 +339,15 @@ class Regularizer:
             for c in range(0, ncols):
                 a_pat[p][c] = float(a_pat[p][c])
         
-             yFit = self.getYFit(ncols, a_pat[p], a_wts)
-             a_actualYn.append(yFit)
+            yFit = self.getYFit(ncols, a_pat[p], a_wts)
+            a_actualYn.append(yFit)
     
         Eout = self.getInErr(npats, a_desiredYn, a_actualYn)
 
         sMsg = "Testing "
-        self.testAccuracy = self.getAccuracy(sMsg, npats, a_desiredYn, a_actualYn)        
+
+        self.testAccuracy = self.getAccuracy(
+            sMsg, npats, a_desiredYn, a_actualYn)        
 
         return Eout
 
@@ -459,7 +494,8 @@ class Regularizer:
 
             a_desCount[int(dout)] += 1
 
-            accuracy = self.getMultipleClassificationAccuracy(npatterns, a_desiredOuts, a_actualOuts)
+            accuracy = self.getMultipleClassificationAccuracy(
+                npatterns, a_desiredOuts, a_actualOuts)
 
         for r in range(0, nClasses):
             for c in range(0, nClasses):
@@ -483,10 +519,16 @@ class Regularizer:
 
     def buildAccuracyMatrix(self, sTab, nouts, a_sOut, a_iDesCount):
 
-        self.addToPdfString("\n" + sTab + sTab + sTab + sTab + "Expected Outputs\n")
-        self.addToPdfString(sTab + sTab + sTab + sTab + " _0_  _1_  _2_  _3_  _4_  _5_  _6_\n")
+        self.addToPdfString(
+            "\n" + sTab + sTab + sTab + sTab + "Expected Outputs\n")
 
-        a_FramePieces = [" A      _0_   | ", "\n c O    _1_   | ", "\n t u    _2_   | ", "\n u t    _3_   | ", "\n a p    _4_   | ", "\n l u    _5_   | ", "\n   t    _6_   | "]
+        self.addToPdfString(
+            sTab + sTab + sTab + sTab + " _0_  _1_  _2_  _3_  _4_  _5_  _6_\n")
+
+        a_FramePieces = [" A      _0_   | ", "\n c O    _1_   | ", 
+                         "\n t u    _2_   | ", "\n u t    _3_   | ", 
+                         "\n a p    _4_   | ", "\n l u    _5_   | ", 
+                         "\n   t    _6_   | "]
 
         for c in range(0, nouts):            
             
@@ -500,7 +542,9 @@ class Regularizer:
 
                 self.addToPdfString(self.insertNum(a_sOut[n][c], s))
         
-        self.addToPdfString("\n" + sTab + sTab + sTab + "  |  ___  ___  ___  ___  ___  ___  ___\n")
+        self.addToPdfString("\n" + sTab + sTab + sTab + \
+                            "  |  ___  ___  ___  ___  ___  ___  ___\n")
+
         self.addToPdfString(sTab + sTab + sTab + sTab)
 
         for c in range(0, nouts):
@@ -511,10 +555,15 @@ class Regularizer:
 
     def buildTruthMatrix(self, sTab, nouts, a_sOut, a_iDesCount):
 
-        self.addToPdfString("\n" + sTab + sTab + sTab + sTab + "Expected Outputs\n")
+        self.addToPdfString("\n" + sTab + sTab + sTab + sTab + \
+                            "Expected Outputs\n")
+
         self.addToPdfString(sTab + sTab + sTab + sTab + " _1_  -1_ \n")
 
-        a_FramePieces = [" A      _1_   | ", "\n c O    -1_   | ", "\n t u          | ", "\n u t          | ", "\n a p          | ", "\n l u          | ", "\n   t          | "]
+        a_FramePieces = [" A      _1_   | ", "\n c O    -1_   | ", 
+                         "\n t u          | ", "\n u t          | ", 
+                         "\n a p          | ", "\n l u          | ", 
+                         "\n   t          | "]
 
         nFramePieces = len(a_FramePieces)
 
@@ -556,7 +605,8 @@ class Regularizer:
 
     def buildRegularizationResultsTable(self, a_Eaug):
 
-        self.addToPdfString("  lambda  |   Ein(Wreg)  | lambda*WregT*Wreg |   Eaug    \n")
+        self.addToPdfString(
+            "  lambda  |   Ein(Wreg)  | lambda*WregT*Wreg |   Eaug    \n")
 
         line1 = "__________"
         line2 = "______________"
