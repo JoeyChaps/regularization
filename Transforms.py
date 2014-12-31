@@ -8,6 +8,7 @@
 #######
 
 class Transform:
+    """A class that transforms data according to various algorithms."""
 
     def __init__ (self, num, maxFeats):
 
@@ -30,6 +31,10 @@ class Transform:
 
 
     def getTransform(self):
+        """Performs a transform and returns the transformed data, or returns 
+        None if no transform was used.
+        """
+
         if self.transNum == 1:
             return self.tran1
         elif self.transNum == 2:
@@ -40,7 +45,12 @@ class Transform:
             return None
 
 
-    def getTestTransform(self):        
+    def getTestTransform(self): 
+        """Performs an appropriate transform for testing based on the transform
+        used for training and returns the transformed data, or returns None if 
+        no transform was used.
+        """
+
         if self.transNum == 1:            
 
             self.count = self.lastCount
@@ -61,7 +71,11 @@ class Transform:
 
 
     def getTransformVersion(self):
-
+        """Returns a string indicating the number of the transform applied to 
+        the data and the number of features used, or returns None if no 
+        transform was used.
+        """
+        
         if self.transNum:            
             sVers = str(self.transNum)
 
@@ -74,22 +88,37 @@ class Transform:
     
 
     def getTransformCount(self):
+        """Returns the number of features that were most recently applied by
+        the transform.
+        """
+
         return self.lastCount
 
 
     def setTransformCount(self, c):
+        """Sets the number of features for the transform to apply."""
+
         self.count = c
 
 
     def getTransformDef(self):
+        """Returns a string definition of the transform."""
+
         return self.transformDef
 
 
     def getDone(self):
+        """Returns whether the transform has been completed."""
         return self.bDone
 
 
     def tran1(self, a_pats):
+        """A function that performs up to a complete fifth-order transformation 
+        on two-dimensional patterns, initially returning the complete first-
+        order transformed patterns, then using an additional feature to 
+        transform and return the patterns each subsequent time the function is 
+        called, until the maximum number of features has been reached.
+        """
 
         self.bDone = False
         
@@ -216,6 +245,12 @@ class Transform:
 
 
     def tran2(self, a_pats):
+        """A function that performs a complete fifth-order transformation on
+        two-dimensional patterns, initially returning the complete first-order 
+        transformed patterns, then using the complete next order to transform 
+        and return the patterns each subsequent time the function is called, 
+        and finally returning the complete fifth-order transformed patterns.
+        """
 
         self.bDone = False
         
@@ -302,6 +337,9 @@ class Transform:
 
 
     def tran3(self, a_pats):
+        """A function that performs a complete fifth-order transformation on
+        one-dimensional patterns and returns the list of transformed patterns.
+        """
 
         self.bDone = False
         
@@ -324,12 +362,6 @@ class Transform:
             a_row = [x0, x0_2, x0_3, x0_4, x0_5]
                     
             a_tranPats.append(a_row)
-
-        self.lastCount = self.count
-        self.count += 1
-
-        if (self.count > self.nMaxFeatures):
-            self.bDone = True                    
 
         return list(a_tranPats)
             	

@@ -8,23 +8,16 @@
 #######
 import Regularizer
 import DataRandomizer
-import time
 from time import gmtime, strftime
 import os
 import math
 import shutil
-import numpy as np
 import sys
 import getopt
 
 
-def printAndWrite(wFile, s):
-    wFile.write(s)
-    print(s)
-
-
 def isnumber(s):
-    
+    # Returns true if s is numeric
     bResult = True
     try: 
         i = float(s)
@@ -35,7 +28,7 @@ def isnumber(s):
 
 
 def loadData(dataFile):
-
+    # Reads the csv dataFile and returns a 2d list of pattern data
     readFile = open(dataFile, 'r') 
 
     count = 0
@@ -57,12 +50,11 @@ def loadData(dataFile):
         cols = len(a_rowp)
 
         for c in range(0, cols):
-            if isnumber(a_rowp[c]): # or (bDeleteColumn):
+            if isnumber(a_rowp[c]): 
                 a_rown.append(a_rowp[c])
             else:
                 if not c in a_deleteCols:
                     a_deleteCols.append(c)
-                # bDeleteColumn = True
 
         cols = len(a_rown)
 
@@ -84,7 +76,7 @@ def loadData(dataFile):
 
 
 def convertClasses(a_pattern, index, targetVal):
-
+    # Replaces class values not equal to the targetVal with -1
     a_pat = list(a_pattern)
 
     if (a_pat[index] != targetVal):
@@ -94,6 +86,9 @@ def convertClasses(a_pattern, index, targetVal):
 
 
 def prepPats(a_pats, clsIndx, cols, bConvert):
+    # Makes sure pattern values are floats and, if bConvert is true, 
+    # converts class values to 1 and -1
+    
     a_tmp = []
 
     for a_pat in a_pats:
@@ -107,6 +102,7 @@ def prepPats(a_pats, clsIndx, cols, bConvert):
 
 
 def prepLambdas(sLambdas):
+    # Makes sure lambda values are floats
     a_tmp = []
 
     a_lams = sLambdas.split(",")
@@ -133,49 +129,28 @@ def main(argv):
                             # program uses previously generated data files 
                             # stored in the saved_data directory.
 
-    nMaxFeatures = 5    # Sets the number of features used in the transform. If 
-                        # 3, the complete first-order transform of three 
-                        # features is applied. If six, the complete second-
-                        # order transform is applied. 
-
-    bGenerateData = False   # If true, instead of reading data files, data is 
-                            # produced using local generateData() method.
-
-    sMode = "Train"
-
     a_lambdas = "0"
-
-    bRandomize = True
-
     projectName = "regularize"
-    fileName = "one-not-one.txt"
-    # fileName = "one-five-train.csv"
+    fileName = ""
     savedDataDir = "saved_data"
-    rTrainFileName = ""
-    rValFileName = ""    
-    rTestFileName = ""
+    savedTrainingFile = "\\regularize_train.csv"
+    rTrainFileName = "" 
     dataSource = ""
-    classIndex = -1
     a_trainPats = []
-    a_valPats = []
-    a_testPats = []
-    nTestPats = 0
     nTrainPats = 0
-    nValPats = 0
     bConvertClass = False
     ncols = -1
-    npats = 0
-    xIn = -1
-    yIn = -1
+    classIndex = 1
+    xIn = 0
+    yIn = 1
     transNum = 3
-    dataFunc = lambda x: 1 + 9 * x * x
+    dataFunc = lambda x: 1 + 9 * x**2
 
     opt = []
     arg = []
 
     try:
-        opts, args = getopt.getopt(argv, "l:p:d", ["lambdas=", "pats=", 
-                                                   "data"])
+        opts, args = getopt.getopt(argv, "l:p:d", ["lambdas=", "pats=", "data"])
             
     except getopt.GetoptError as err:
         print("blarf")
@@ -188,172 +163,39 @@ def main(argv):
 
             patsLim = int(arg)
 
-        elif opt in ("-f", "--features"):
-
-            nMaxFeatures = int(arg)
-
-        elif opt in ("-m", "--mode"):
-
-            if ((arg == "Train") or (arg == "TrainAndTest") or 
-                (arg == "TrainAndVal")):
-
-                sMode = arg
-
         elif opt in ("-d", "--data"):
             
             bRefreshData = False
-
-        elif opt in ("-r", "--randomize"):
-
-            bRandomize = True
-            sMode = "Train"
-            projectName = "regularize"
 
         elif opt in ("-l", "--lambdas"):
 
             a_lambdas = arg
             transNum = 3
-            nMaxFeatures = 5
-    
-    if (projectName == "one-not-one"):
-        bConvertClass = True
 
     nowTime = strftime("%Y-%m-%d_%H-%M-%S", gmtime())
     newOutputDir = "" 
     otherFileName = ""
 
-    if sMode == "TrainAndTest":
-        if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(
-                fileName, projectName, patsLim)
-
-            data_randomizer.createDataFiles()
-
-            rTestFileName = data_randomizer.getTestFile()
-            rTrainFileName = data_randomizer.getTrainFile()
-
-            dataSource = data_randomizer.getDataDirectory()
-        else:
-            rTestFileName = savedDataDir + "\\one-not-one_test.csv"
-            rTrainFileName = savedDataDir + "\\one-not-one_train.csv"
-            otherFileName = rTestFileName
-
-        a_trainPats = loadData(rTrainFileName)
-        nTrainPats = len(a_trainPats)
+    if patsLim < 2:
+        patsLim = 5
         
-        a_testPats = loadData(rTestFileName)
-        nTestPats = len(a_testPats)
+    a_lambdas = prepLambdas(a_lambdas)
 
-        ncols = len(a_trainPats[0]) - 1
+    if bRefreshData:
+        data_randomizer = DataRandomizer.DataRandomizer(
+            fileName, projectName, patsLim)
 
-        if ((fileName == "one-not-one.txt") or 
-            (fileName == "one-five-train.csv")):
+        data_randomizer.generateData(patsLim, dataFunc)        
+        rTrainFileName = data_randomizer.getTrainFile()
+        dataSource = data_randomizer.getDataDirectory()
+    else:
+        rTrainFileName = savedDataDir + savedTrainingFile
 
-            classIndex = 0
-            xIn = 1
-            yIn = 2
-        elif (fileName == "shortened_glassdata.csv"):
-            classIndex = ncols
-
-        a_trainPats = prepPats(a_trainPats, classIndex, ncols, bConvertClass)
-        a_testPats = prepPats(a_testPats, classIndex, ncols, bConvertClass)        
-
-        npats = nTrainPats + nTestPats
-
-        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrTe-" + \
-                        str(nMaxFeatures)
-
-    elif sMode == "TrainAndVal":
-        if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(
-                fileName, projectName, patsLim)
-
-            data_randomizer.createTrainAndValFiles()
-
-            rValFileName = data_randomizer.getValFile()
-            rTrainFileName = data_randomizer.getTrainFile()
-
-            dataSource = data_randomizer.getDataDirectory()
-        else:
-            rValFileName = savedDataDir + "\\one-not-one_val.csv"
-            rTrainFileName = savedDataDir + "\\one-not-one_train.csv"
-            otherFileName = rValFileName
-
-        a_trainPats = loadData(rTrainFileName)
-        nTrainPats = len(a_trainPats)
-
-        a_valPats = loadData(rValFileName)
-        nValPats = len(a_valPats)
-
-        ncols = len(a_trainPats[0]) - 1
-
-        if ((fileName == "one-not-one.txt") or 
-            (fileName == "one-five-train.csv")):
-
-            classIndex = 0
-            xIn = 1
-            yIn = 2
-        elif (fileName == "shortened_glassdata.csv"):
-            classIndex = ncols
-
-        a_trainPats = prepPats(a_trainPats, classIndex, ncols, bConvertClass)
-        a_valPats = prepPats(a_valPats, classIndex, ncols, bConvertClass)    
-
-        npats = nTrainPats + nValPats
-
-        newOutputDir = "output\\out_" + nowTime + "_" + str(npats) + "TrVal-" \
-                        + str(nMaxFeatures)
-
-    elif sMode == "Train":
-
-        savedTrainingFile = "\\one-not-one_train.csv"
-
-        if bRandomize:
-            if patsLim < 2:
-                patsLim = 5
-                
-            a_lambdas = prepLambdas(a_lambdas)
-            savedTrainingFile = "\\regularize_train.csv"
-
-        if bRefreshData:
-            data_randomizer = DataRandomizer.DataRandomizer(
-                fileName, projectName, patsLim)
-
-            if bRandomize:
-                data_randomizer.generateData(patsLim, dataFunc)
-            else:            
-                data_randomizer.createTrainFile()
-            
-            rTrainFileName = data_randomizer.getTrainFile()
-            dataSource = data_randomizer.getDataDirectory()
-        else:
-            rTrainFileName = savedDataDir + savedTrainingFile
-
-        a_trainPats = loadData(rTrainFileName)
-
-        ncols = len(a_trainPats[0]) - 1
-
-        if bRandomize:
-            classIndex = 1
-            bConvertClass = False
-            xIn = 0
-            yIn = 1
-
-        elif ((fileName == "one-not-one.txt") or 
-              (fileName == "one-five-train.csv")):
-
-            classIndex = 0
-            xIn = 1
-            yIn = 2
-        elif (fileName == "shortened_glassdata.csv"):
-            classIndex = ncols
-        
-        a_trainPats = prepPats(a_trainPats, classIndex, ncols, bConvertClass)
-
-        nTrainPats = len(a_trainPats)
-        npats = nTrainPats
-
-        newOutputDir = "output\\out_" + nowTime + "_" + str(npats)
+    a_trainPats = loadData(rTrainFileName)
+    ncols = len(a_trainPats[0]) - 1    
+    a_trainPats = prepPats(a_trainPats, classIndex, ncols, bConvertClass)
+    nTrainPats = len(a_trainPats)
+    newOutputDir = "output\\out_" + nowTime + "_" + str(nTrainPats)
 
     if not os.path.exists(newOutputDir):
         os.makedirs(newOutputDir)
@@ -371,24 +213,9 @@ def main(argv):
         if otherFileName:
             shutil.copy(otherFileName, dataDir)
 
-    reg = Regularizer.Regularizer(newOutputDir, transNum, projectName)
-
-    if sMode == "Train":
-        
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas,
-                         nTrainPats, 0, [], a_trainPats, dataFunc)
-
-    elif sMode == "TrainAndTest":
-
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas, 
-                         nTrainPats, nTestPats, a_testPats, a_trainPats, 
-                         dataFunc)
-
-    elif sMode == "TrainAndVal":
-        
-        reg.runAlgorithm(nMaxFeatures, classIndex, xIn, yIn, ncols, a_lambdas,
-                         nTrainPats, nValPats, a_valPats, a_trainPats,
-                         dataFunc)
+    reg = Regularizer.Regularizer(newOutputDir)
+    reg.runAlgorithm(classIndex, xIn, yIn, ncols, transNum, nTrainPats, 
+                     a_lambdas, a_trainPats, dataFunc)
         
     print("\nDone!")
 

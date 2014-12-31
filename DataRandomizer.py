@@ -14,6 +14,9 @@ import numpy as np
 
 
 class DataRandomizer:
+    """A class that reads a data file, randomly orders the patterns, and 
+    creates files for the training, test, and validation sets as called for.
+    """
 
     def __init__(self, fileName, projectName, patsLim):
         self.npatterns = 0
@@ -33,30 +36,46 @@ class DataRandomizer:
 
         
     def getTrainFile(self):
+        """Returns the name of the training set file."""
+
         return self.trainFile
 
     def getTestFile(self):
+        """Returns the name of the test set file."""
+
         return self.testFile
 
     def getValFile(self):
+        """Returns the name of the validation set file."""
+
         return self.valFile
 
     def getDataDirectory(self):
+        """Returns the directory containing the new data files."""
+
         return self.directory
 
     def createDataFiles(self):
+        """Reads the data file and creates training and test set files."""
+
         a_patterns = self.readDataFile()
         self.randomizeAndWriteTrainAndTest(a_patterns)
         
     def createTrainFile(self):
+        """Reads the data file and creates a training set file."""
+
         a_patterns = self.readDataFile()
         self.randomizeAndWriteTrain(a_patterns)
         
     def createTrainAndValFiles(self):
+        """Reads the data file and creates training and validation set files."""
+
         a_patterns = self.readDataFile()
         self.randomizeAndWriteTrainAndVal(a_patterns)
     
     def generateData(self, patsLimit, func):
+        """Creates a data file of random values."""
+
         a_patterns = []
         npats = patsLimit
         mean = 0
@@ -76,6 +95,8 @@ class DataRandomizer:
         
 
     def writeNewDataFile(self, a_patterns):
+        """Writes a training set file from a set of pattern values."""
+
         writeTrainFile = open(self.trainFile, 'w')
 
         a_pats = list(a_patterns)
@@ -95,6 +116,8 @@ class DataRandomizer:
 
 
     def readDataFile(self):
+        """Reads the class objects's dataFile and returns a list of patterns."""
+
         readFile = open(self.dataFile, 'r')
 
         count = 0
@@ -139,6 +162,10 @@ class DataRandomizer:
 
 
     def randomizeAndWriteTrain(self, a_pats):
+        """Arranges the patterns in a random order, and writes them to a 
+        training set file.
+        """
+
         writeTrainFile = open(self.trainFile, 'w')
 
         npats = self.npatterns # + 1
@@ -172,6 +199,10 @@ class DataRandomizer:
 
 
     def randomizeAndWriteTrainAndTest(self, a_pats):
+        """Arranges the patterns in a random order, and writes them to 
+        training and test set files.
+        """
+
         writeTestFile = open(self.testFile, 'w')
         writeTrainFile = open(self.trainFile, 'w')
 
@@ -225,6 +256,10 @@ class DataRandomizer:
 
 
     def randomizeAndWriteTrainAndVal(self, a_pats):
+        """Arranges the patterns in a random order, and writes them to 
+        training and test set files.
+        """
+
         writeValFile = open(self.valFile, 'w')
         writeTrainFile = open(self.trainFile, 'w')
 

@@ -9,6 +9,9 @@
 import matplotlib.pyplot as plt
 
 class GraphPlotter:
+    """A class that generates graphical representations of X and Y data and
+    saves the graphs in a file.
+    """
 
     def __init__(self, fileName, xText, yText, title, legend=""):
 
@@ -37,12 +40,24 @@ class GraphPlotter:
 
 
     def getXMin(self):
+        """Returns the class object's value for the smallest X."""
+
         return self.xMin
 
     def getXMax(self):
+        """Returns the class object's value for the largest X."""
+
         return self.xMax
         
     def plotGraphs(self, a_dimensions=[]):
+        """Plots all of the graphs that have been added to the class object and
+        saves them in a single file.
+
+        Keyword arguments:
+        a_dimensions -- the dimensions of the graph, in format [min X, max X, 
+        min Y, max Y]; if a_dimensions is empty, the dimensions are set
+        according to the class object's minimum and maximum X and Y values.
+        """
 
         if self.sLegend:
             for g in range(0, self.graphCount):
@@ -73,9 +88,8 @@ class GraphPlotter:
             self.yMax = a_dimensions[3]
 
         self.ax.axis([self.xMin,self.xMax,self.yMin,self.yMax])    
-
         handles, labels = self.ax.get_legend_handles_labels()
-
+        
         lgd = self.ax.legend(handles, labels, loc='upper center', 
                              bbox_to_anchor=(1.18, 1.02))
 
@@ -86,6 +100,7 @@ class GraphPlotter:
 
 
     def addGraph(self, a_xAxis, a_yAxis, sType, legendText=""):
+        """Adds a graph to the class object."""
 
         self.a_x.append(a_xAxis)
         self.a_y.append(a_yAxis)
